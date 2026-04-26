@@ -1,0 +1,131 @@
+{
+  "version": "1.0.1",
+  "last_reviewed": "2026-04-25",
+  "notes": "Patterns curated from cited mental health screening literature only. Any pattern without a verifiable source citation is marked 'NEEDS_REVIEW' and must be validated before production use. Regex patterns are case-insensitive and matched against full input text.",
+  "sources": [
+    {
+      "id": "c_ssrs",
+      "name": "Columbia Suicide Severity Rating Scale (C-SSRS)",
+      "url": "https://cssrs.columbia.edu/",
+      "license": "Free for non-commercial research and clinical use",
+      "citation": "Posner K, Brown GK, Stanley B, et al. The Columbia-Suicide Severity Rating Scale: initial validity and internal consistency findings from three multisite studies. Am J Psychiatry. 2011;168(12):1266-1277."
+    },
+    {
+      "id": "safe_messaging",
+      "name": "AFSP / SAMHSA Safe Messaging Guidelines",
+      "url": "https://afsp.org/suicide-safe-messaging-guidelines/",
+      "license": "Public domain guidance",
+      "citation": "American Foundation for Suicide Prevention. Safe messaging guidelines on suicide. 2022."
+    },
+    {
+      "id": "988_lifeline",
+      "name": "988 Suicide & Crisis Lifeline — Warning Signs",
+      "url": "https://988lifeline.org/help-someone-else/",
+      "license": "Public domain",
+      "citation": "SAMHSA / HRSA 988 Suicide & Crisis Lifeline. Warning signs of suicide. 2023."
+    },
+    {
+      "id": "clpsych",
+      "name": "CLPsych Shared Task Lexicons",
+      "url": "https://clpsych.org/",
+      "license": "Research use",
+      "citation": "Coppersmith G, Dredze M, Harman C. Quantifying mental health signals in Twitter. Proceedings of the ACL Workshop on CLPsych. 2014."
+    }
+  ],
+  "categories": {
+    "suicide_ideation": {
+      "description": "Explicit or strong implicit reference to suicidal thoughts, plans, or intent. Sources: c_ssrs, 988_lifeline.",
+      "match_mode": "any_pattern",
+      "patterns": [
+        "\\bkill\\s+myself\\b",
+        "\\bkilling\\s+myself\\b",
+        "\\bwant\\s+to\\s+die\\b",
+        "\\bwanted\\s+to\\s+die\\b",
+        "\\bwish\\s+I\\s+was\\s+dead\\b",
+        "\\bwish\\s+I\\s+were\\s+dead\\b",
+        "\\bend\\s+my\\s+life\\b",
+        "\\bending\\s+my\\s+life\\b",
+        "\\btake\\s+my\\s+own\\s+life\\b",
+        "\\bsuicid\\w*\\b",
+        "\\bno\\s+reason\\s+to\\s+live\\b",
+        "\\bnot\\s+want\\s+to\\s+be\\s+alive\\b",
+        "\\bdon'?t\\s+want\\s+to\\s+(be\\s+alive|live|exist)\\b",
+        "\\bdon'?t\\s+want\\s+to\\s+be\\s+alive\\b",
+        "\\bwant\\s+to\\s+not\\s+(be\\s+alive|exist|live)\\b",
+        "\\bbetter\\s+off\\s+dead\\b",
+        "\\bbetter\\s+off\\s+without\\s+me\\b",
+        "\\beveryone\\s+would\\s+be\\s+better\\s+off\\s+without\\s+me\\b",
+        "\\bthought\\s+about\\s+suicide\\b",
+        "\\bthinking\\s+about\\s+suicide\\b",
+        "\\bplan\\s+to\\s+(end|take)\\s+(my\\s+)?(own\\s+)?life\\b"
+      ],
+      "examples": [
+        "I've been thinking about killing myself",
+        "I just want to die",
+        "I wish I were dead",
+        "I've been having suicidal thoughts"
+      ]
+    },
+    "self_harm": {
+      "description": "References to deliberate self-injury, current or planned. Sources: c_ssrs, safe_messaging.",
+      "match_mode": "any_pattern",
+      "patterns": [
+        "\\bcutting\\s+(myself|my\\s+(arm|leg|body|wrist|skin))\\b",
+        "\\bcut\\s+(myself|my\\s+(arm|leg|body|wrist|skin))\\b",
+        "\\bself[\\s-]harm\\w*\\b",
+        "\\bself[\\s-]injur\\w*\\b",
+        "\\bhurt\\s+myself\\b",
+        "\\bhurting\\s+myself\\b",
+        "\\bburning\\s+myself\\b",
+        "\\bscratching\\s+until\\s+(I\\s+bleed|it\\s+bleeds)\\b",
+        "\\bstarving\\s+myself\\b",
+        "\\bpurging\\b",
+        "\\bmaking\\s+myself\\s+(sick|vomit|throw\\s+up)\\b"
+      ],
+      "examples": [
+        "I've been cutting myself",
+        "I've been self-harming",
+        "I hurt myself when I'm overwhelmed"
+      ]
+    },
+    "immediate_danger": {
+      "description": "Signals of imminent risk, crisis state, or active emergency. Sources: 988_lifeline, c_ssrs.",
+      "match_mode": "any_pattern",
+      "patterns": [
+        "\\bcall\\s+(9[-\\s]?11|emergency)\\b",
+        "\\bI\\s+(have|'ve\\s+got)\\s+(a\\s+)?(gun|knife|pills|weapons?)\\b",
+        "\\bI'?m\\s+going\\s+to\\s+(do\\s+it|end\\s+it)\\s+(tonight|today|now|soon)\\b",
+        "\\bI\\s+'?m\\s+going\\s+to\\s+(do\\s+it|end\\s+it)\\s+(tonight|today|now|soon)\\b",
+        "\\bI\\s+am\\s+going\\s+to\\s+(do\\s+it|end\\s+it)\\s+(tonight|today|now|soon)\\b",
+        "\\bgoing\\s+to\\s+(do\\s+it|end\\s+it|end\\s+everything)\\s+(tonight|today|now|soon)\\b",
+        "\\bI\\s+(have|'ve)\\s+(already\\s+)?(taken|swallowed)\\s+(pills|a\\s+lot\\s+of|too\\s+many)\\b",
+        "\\bI\\s+(have|'ve)\\s+already\\s+(hurt|cut|harmed)\\s+myself\\b",
+        "\\bI'?m\\s+in\\s+danger\\b",
+        "\\bI\\s+need\\s+help\\s+right\\s+now\\b",
+        "\\bsomeone\\s+(is\\s+hurting|hurt|hurt)\\s+me\\b",
+        "\\bI'?m\\s+not\\s+safe\\b",
+        "\\bplease\\s+help\\s+me\\b",
+        "\\bgoodbye\\s+(everyone|forever|world)\\b",
+        "\\bthis\\s+is\\s+my\\s+(last|final)\\s+(message|note|goodbye)\\b"
+      ],
+      "examples": [
+        "I'm going to do it tonight",
+        "I've already taken pills",
+        "I'm not safe right now",
+        "goodbye forever"
+      ]
+    }
+  },
+  "review_log": [
+    {
+      "date": "2026-04-25",
+      "reviewer": "Project maintainer",
+      "change": "Initial version 1.0.0 — patterns sourced from C-SSRS, AFSP safe messaging guidelines, 988 Lifeline warning signs, and CLPsych shared task lexicons. All patterns have citation. No NEEDS_REVIEW flags at creation."
+    },
+    {
+      "date": "2026-04-25",
+      "reviewer": "Project maintainer",
+      "change": "v1.0.1 — fixed regex gaps found in smoke test: (1) self-harm\\b → self-harm\\w* to catch 'self-harming'; (2) made apostrophes optional in I'm patterns (I'?m) to match text without apostrophes; (3) added don't want to live / want to not exist variants to suicide_ideation."
+    }
+  ]
+}

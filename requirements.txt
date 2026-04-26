@@ -1,0 +1,26 @@
+# Campus Wellness Navigator — pinned dependencies for Streamlit Cloud
+# Generated from pyproject.toml (excludes jupyterlab — dev-only)
+#
+# NOTE: torch==2.4.1 is ~2GB. If Streamlit Cloud memory limits are hit,
+# replace local transformer inference with Hugging Face Inference API
+# (see Risk Register in mental_health_implementation_plan.md).
+
+pandas==2.2.2
+numpy==1.26.4
+scikit-learn==1.5.1
+xgboost==2.1.1
+imbalanced-learn==0.12.3
+sentence-transformers==3.0.1
+transformers==4.44.2
+torch==2.4.1
+vaderSentiment==3.3.2
+shap==0.46.0
+lime==0.2.0.1
+fairlearn==0.10.0
+aif360==0.6.1
+chromadb==0.5.5
+streamlit==1.38.0
+groq==0.11.0
+python-dotenv==1.0.1
+matplotlib==3.9.2
+seaborn==0.13.2
