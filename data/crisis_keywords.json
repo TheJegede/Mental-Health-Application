@@ -1,5 +1,5 @@
 {
-  "version": "1.0.1",
+  "version": "1.0.3",
   "last_reviewed": "2026-04-25",
   "notes": "Patterns curated from cited mental health screening literature only. Any pattern without a verifiable source citation is marked 'NEEDS_REVIEW' and must be validated before production use. Regex patterns are case-insensitive and matched against full input text.",
   "sources": [
@@ -48,6 +48,7 @@
         "\\btake\\s+my\\s+own\\s+life\\b",
         "\\bsuicid\\w*\\b",
         "\\bno\\s+reason\\s+to\\s+live\\b",
+        "\\bno\\s+reason\\s+(for\\s+me\\s+)?to\\s+keep\\s+going\\b",
         "\\bnot\\s+want\\s+to\\s+be\\s+alive\\b",
         "\\bdon'?t\\s+want\\s+to\\s+(be\\s+alive|live|exist)\\b",
         "\\bdon'?t\\s+want\\s+to\\s+be\\s+alive\\b",
@@ -55,6 +56,7 @@
         "\\bbetter\\s+off\\s+dead\\b",
         "\\bbetter\\s+off\\s+without\\s+me\\b",
         "\\beveryone\\s+would\\s+be\\s+better\\s+off\\s+without\\s+me\\b",
+        "\\bbetter\\s+off\\s+if\\s+I\\s+(just\\s+)?(disappear\\w*|was\\s+gone|were\\s+gone|wasn'?t\\s+here|wasn'?t\\s+around)\\b",
         "\\bthought\\s+about\\s+suicide\\b",
         "\\bthinking\\s+about\\s+suicide\\b",
         "\\bplan\\s+to\\s+(end|take)\\s+(my\\s+)?(own\\s+)?life\\b"
@@ -98,7 +100,8 @@
         "\\bI\\s+'?m\\s+going\\s+to\\s+(do\\s+it|end\\s+it)\\s+(tonight|today|now|soon)\\b",
         "\\bI\\s+am\\s+going\\s+to\\s+(do\\s+it|end\\s+it)\\s+(tonight|today|now|soon)\\b",
         "\\bgoing\\s+to\\s+(do\\s+it|end\\s+it|end\\s+everything)\\s+(tonight|today|now|soon)\\b",
-        "\\bI\\s+(have|'ve)\\s+(already\\s+)?(taken|swallowed)\\s+(pills|a\\s+lot\\s+of|too\\s+many)\\b",
+        "\\bI('ve|\\s+have)\\s+(already\\s+)?(taken|swallowed)\\s+(pills|a\\s+lot\\s+of|too\\s+many)\\b",
+        "\\bI\\s+already\\s+(took|swallowed)\\s+(pills|a\\s+lot\\s+of|too\\s+many)\\b",
         "\\bI\\s+(have|'ve)\\s+already\\s+(hurt|cut|harmed)\\s+myself\\b",
         "\\bI'?m\\s+in\\s+danger\\b",
         "\\bI\\s+need\\s+help\\s+right\\s+now\\b",
@@ -106,7 +109,8 @@
         "\\bI'?m\\s+not\\s+safe\\b",
         "\\bplease\\s+help\\s+me\\b",
         "\\bgoodbye\\s+(everyone|forever|world)\\b",
-        "\\bthis\\s+is\\s+my\\s+(last|final)\\s+(message|note|goodbye)\\b"
+        "\\bthis\\s+is\\s+my\\s+(last|final)\\s+(message|note|goodbye)\\b",
+        "\\bwon'?t\\s+be\\s+a\\s+(problem|burden|bother)\\s+(for\\s+anyone\\s+)?(anymore|any\\s+longer|much\\s+longer)\\b"
       ],
       "examples": [
         "I'm going to do it tonight",
@@ -126,6 +130,16 @@
       "date": "2026-04-25",
       "reviewer": "Project maintainer",
       "change": "v1.0.1 — fixed regex gaps found in smoke test: (1) self-harm\\b → self-harm\\w* to catch 'self-harming'; (2) made apostrophes optional in I'm patterns (I'?m) to match text without apostrophes; (3) added don't want to live / want to not exist variants to suicide_ideation."
+    },
+    {
+      "date": "2026-04-25",
+      "reviewer": "Project maintainer",
+      "change": "v1.0.2 — fix: overdose pattern \\bI\\s+(have|'ve)\\s+ failed on contraction 'I've' (\\s+ requires whitespace, not present in 'I've'). Changed to \\bI('ve|\\s+have)\\s+ to handle both 'I have' and 'I've'. Detected by mandatory 10/10 crisis recall gate in notebook 07."
+    },
+    {
+      "date": "2026-04-25",
+      "reviewer": "Project maintainer",
+      "change": "v1.0.3 — four gaps found in chatbot crisis recall gate (notebook 09): (1) added 'I already took pills' pattern (past tense overdose without auxiliary 'have'); (2) added 'better off if I disappeared/was gone' (burden-ideation variant, source: 988_lifeline warning signs); (3) added 'no reason to keep going' (hopelessness signal, source: 988_lifeline); (4) added 'won't be a problem/burden anymore' (farewell signal, source: AFSP safe messaging guidelines). All patterns sourced from cited literature."
     }
   ]
 }

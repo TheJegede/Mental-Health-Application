@@ -1,0 +1,7 @@
+{
+  "crisis_recall": "10/10",
+  "diagnosis_violations": 0,
+  "mean_latency_ms": 10778.055815263227,
+  "false_positive_triggers": 2,
+  "overall_gate": true
+}
