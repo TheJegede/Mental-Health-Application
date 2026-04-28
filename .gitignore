@@ -6,7 +6,7 @@ __pycache__/
 .ipynb_checkpoints/
 data/external/
 data/vector_db/
-models/
+models/distress_classifier/
 .DS_Store
 *.egg-info/
 dist/
