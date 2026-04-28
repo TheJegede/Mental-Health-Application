@@ -14,6 +14,9 @@ from pathlib import Path
 
 _DEFAULT_LEXICON_PATH = Path(__file__).parent.parent / "data" / "crisis_keywords.json"
 
+# Cache compiled patterns by dict identity — same dict object reused across calls
+_pattern_cache: dict[int, list[tuple[str, re.Pattern]]] = {}
+
 
 @dataclass(frozen=True)
 class CrisisMatch:
@@ -36,6 +39,13 @@ def _compile_patterns(lexicon: dict) -> list[tuple[str, re.Pattern]]:
     return compiled
 
 
+def _get_compiled(lexicon: dict) -> list[tuple[str, re.Pattern]]:
+    key = id(lexicon)
+    if key not in _pattern_cache:
+        _pattern_cache[key] = _compile_patterns(lexicon)
+    return _pattern_cache[key]
+
+
 def check_crisis(
     text: str,
     lexicon: dict | None = None,
@@ -53,9 +63,7 @@ def check_crisis(
     if lexicon is None:
         lexicon = load_lexicon(lexicon_path)
 
-    compiled = _compile_patterns(lexicon)
-
-    for category, pattern in compiled:
+    for category, pattern in _get_compiled(lexicon):
         m = pattern.search(text)
         if m:
             start = max(0, m.start() - 30)
@@ -79,10 +87,9 @@ def check_crisis_all_matches(
     if lexicon is None:
         lexicon = load_lexicon(lexicon_path)
 
-    compiled = _compile_patterns(lexicon)
     matches = []
 
-    for category, pattern in compiled:
+    for category, pattern in _get_compiled(lexicon):
         m = pattern.search(text)
         if m:
             start = max(0, m.start() - 30)

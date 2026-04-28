@@ -53,7 +53,7 @@ _FINANCIAL_STRESS_RATE_BY_AID = {
     "both": 0.42,
 }
 
-_FEATURE_WEIGHTS = {
+FEATURE_WEIGHTS = {
     "engagement_variance": 0.20,
     "sleep_schedule_drift": 0.20,
     "social_activity_decline": -0.18,
@@ -152,14 +152,14 @@ def generate(
     self_report_normalized = (100.0 - self_report_score) / 100.0  # invert: high distress = high value
 
     latent = (
-        _FEATURE_WEIGHTS["engagement_variance"] * engagement_variance
-        + _FEATURE_WEIGHTS["sleep_schedule_drift"] * sleep_schedule_drift
-        + _FEATURE_WEIGHTS["social_activity_decline"] * social_activity_decline
-        + _FEATURE_WEIGHTS["academic_trend"] * academic_trend
-        + _FEATURE_WEIGHTS["missed_class_streak"] * (missed_class_streak / 14.0)
-        + _FEATURE_WEIGHTS["financial_stress_flag"] * financial_stress_flag
-        + _FEATURE_WEIGHTS["help_seeking_flag"] * help_seeking_flag
-        + _FEATURE_WEIGHTS["self_report_score_normalized"] * self_report_normalized
+        FEATURE_WEIGHTS["engagement_variance"] * engagement_variance
+        + FEATURE_WEIGHTS["sleep_schedule_drift"] * sleep_schedule_drift
+        + FEATURE_WEIGHTS["social_activity_decline"] * social_activity_decline
+        + FEATURE_WEIGHTS["academic_trend"] * academic_trend
+        + FEATURE_WEIGHTS["missed_class_streak"] * (missed_class_streak / 14.0)
+        + FEATURE_WEIGHTS["financial_stress_flag"] * financial_stress_flag
+        + FEATURE_WEIGHTS["help_seeking_flag"] * help_seeking_flag
+        + FEATURE_WEIGHTS["self_report_score_normalized"] * self_report_normalized
         + rng.normal(0, 0.05, n)  # Gaussian noise
     )
 
@@ -181,7 +181,7 @@ def generate(
 
     print(f"[synthetic_data] n={n:,} | seed={seed} | threshold={threshold:.4f}")
     print(f"[synthetic_data] target_prevalence={target_prevalence:.3f} | actual={actual_prevalence:.4f}")
-    print(f"[synthetic_data] feature_weights={json.dumps(_FEATURE_WEIGHTS, indent=2)}")
+    print(f"[synthetic_data] feature_weights={json.dumps(FEATURE_WEIGHTS, indent=2)}")
 
     df = pd.DataFrame(
         {
@@ -208,6 +208,23 @@ def generate(
         print(f"[synthetic_data] written to {output_path}")
 
     return df
+
+
+def demo_score_from_df(df: pd.DataFrame) -> pd.Series:
+    """Reproduce latent score formula for dashboard demo mode. Returns Series of scores 0–100."""
+    sr_norm = (100.0 - df["self_report_score"]) / 100.0
+    latent = (
+        FEATURE_WEIGHTS["engagement_variance"] * df["engagement_variance"]
+        + FEATURE_WEIGHTS["sleep_schedule_drift"] * df["sleep_schedule_drift"]
+        + FEATURE_WEIGHTS["social_activity_decline"] * df["social_activity_decline"]
+        + FEATURE_WEIGHTS["academic_trend"] * df["academic_trend"]
+        + FEATURE_WEIGHTS["missed_class_streak"] * (df["missed_class_streak"] / 14.0)
+        + FEATURE_WEIGHTS["financial_stress_flag"] * df["financial_stress_flag"]
+        + FEATURE_WEIGHTS["help_seeking_flag"] * df["help_seeking_flag"]
+        + FEATURE_WEIGHTS["self_report_score_normalized"] * sr_norm
+    )
+    lo, hi = latent.min(), latent.max()
+    return ((latent - lo) / (hi - lo) * 100).clip(0, 100)
 
 
 if __name__ == "__main__":

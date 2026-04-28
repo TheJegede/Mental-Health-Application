@@ -91,7 +91,8 @@ class KnowledgeBase:
                 where=where_filter,
                 include=["documents", "metadatas", "distances"],
             )
-        except Exception:
+        except Exception as e:
+            print(f"[knowledge_base] query error: {e}")
             return []
 
         docs = []
@@ -120,7 +121,8 @@ class KnowledgeBase:
                 {"text": doc, "metadata": meta}
                 for doc, meta in zip(results["documents"], results["metadatas"])
             ]
-        except Exception:
+        except Exception as e:
+            print(f"[knowledge_base] get_crisis_resources error: {e}")
             return []
 
 
@@ -160,7 +162,6 @@ def build_knowledge_base(
     print(f"[knowledge_base] Ingesting {len(docs)} documents...")
 
     all_texts, all_ids, all_metas = [], [], []
-    chunk_idx = 0
 
     for doc in docs:
         if not doc.content.strip():
@@ -182,7 +183,6 @@ def build_knowledge_base(
             all_texts.append(chunk)
             all_ids.append(chunk_id)
             all_metas.append(meta)
-            chunk_idx += 1
 
     # Batch upsert (ChromaDB default batch = 5461)
     batch_size = 500

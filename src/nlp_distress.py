@@ -21,7 +21,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
-warnings.filterwarnings("ignore")
+import numpy as np
+
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 _DEFAULT_MODEL_DIR = Path(__file__).parent.parent / "models" / "distress_classifier"
 _DEFAULT_LEXICON_PATH = Path(__file__).parent.parent / "data" / "crisis_keywords.json"
@@ -192,9 +195,9 @@ class NLPDistressPipeline:
         try:
             from lime.lime_text import LimeTextExplainer
 
-            def predict_fn(texts: list[str]) -> list[list[float]]:
+            def predict_fn(texts: list[str]) -> np.ndarray:
                 probs = self._transformer_predict_proba(texts)
-                return [[1 - p, p] for p in probs]
+                return np.array([[1 - p, p] for p in probs])
 
             explainer = LimeTextExplainer(
                 class_names=["no_distress_signal", "distress_signal"],
@@ -322,7 +325,7 @@ class NLPDistressPipeline:
 
     @property
     def model_source(self) -> str:
-        return self._model_source if hasattr(self, "_model_source") else "unknown"
+        return self._model_source
 
 
 # ---------------------------------------------------------------------------

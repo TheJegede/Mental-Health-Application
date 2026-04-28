@@ -15,6 +15,9 @@ repo_root = Path(__file__).parent.parent
 sys.path.insert(0, str(repo_root))
 load_dotenv(repo_root / ".env")
 
+from src.synthetic_data import demo_score_from_df
+from src.chatbot.safety import CRISIS_FOOTER_MD
+
 st.set_page_config(
     page_title="Coordinator Overview — Campus Wellness Navigator",
     page_icon="📊",
@@ -28,13 +31,6 @@ st.warning(
 
 _SYNTH_CSV = repo_root / "data" / "synthetic" / "student_wellbeing.csv"
 
-SCORE_BANDS = {
-    "priority_follow_up": (86, 100),
-    "outreach_recommended": (66, 85),
-    "check_in_suggested": (41, 65),
-    "baseline": (0, 40),
-}
-
 
 @st.cache_data(show_spinner="Loading student data...")
 def load_data() -> pd.DataFrame:
@@ -46,20 +42,7 @@ def load_data() -> pd.DataFrame:
 
 @st.cache_data(show_spinner=False)
 def compute_demo_scores(df: pd.DataFrame) -> pd.Series:
-    """Reproduce latent score formula (without trained model) for demo KPIs."""
-    sr_norm = (100.0 - df["self_report_score"]) / 100.0
-    latent = (
-        0.20 * df["engagement_variance"]
-        + 0.20 * df["sleep_schedule_drift"]
-        + (-0.18) * df["social_activity_decline"]
-        + (-0.22) * df["academic_trend"]
-        + 0.18 * (df["missed_class_streak"] / 14.0)
-        + 0.12 * df["financial_stress_flag"]
-        + (-0.08) * df["help_seeking_flag"]
-        + (-0.25) * sr_norm
-    )
-    lo, hi = latent.min(), latent.max()
-    return ((latent - lo) / (hi - lo) * 100).clip(0, 100)
+    return demo_score_from_df(df)
 
 
 df = load_data()
@@ -201,7 +184,4 @@ with tab4:
     st.bar_chart(rate, height=180)
 
 st.divider()
-st.caption(
-    "**Crisis resources:** Call or text **988** · Text HOME to **741741** · "
-    "UCLA CAPS: **(310) 825-0768** · Emergency: **911**"
-)
+st.caption(CRISIS_FOOTER_MD)

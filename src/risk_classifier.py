@@ -69,6 +69,17 @@ SCORE_BANDS: dict[str, tuple[int, int]] = {
     "priority_follow_up": (86, 100),
 }
 
+FEATURE_RISK_DIRECTION: dict[str, str] = {
+    "engagement_variance": "(+) risk",
+    "sleep_schedule_drift": "(+) risk",
+    "social_activity_decline": "(+) risk",   # more negative = more decline = higher risk
+    "academic_trend": "(-) risk",            # higher = better grades = lower risk
+    "missed_class_streak": "(+) risk",
+    "financial_stress_flag": "(+) risk",
+    "help_seeking_flag": "(-) risk",
+    "self_report_score": "(-) risk",         # higher = better wellbeing = lower risk
+}
+
 
 def score_to_band(score: float) -> str:
     s = int(score)
@@ -93,7 +104,7 @@ class ModelBundle:
     calibrated_pipeline: object       # CalibratedClassifierCV wrapping Pipeline(scaler, clf)
     raw_pipeline: object              # Pipeline(scaler, clf) — needed for SHAP TreeExplainer
     feature_names: list[str]
-    train_metrics: dict = field(default_factory=dict)
+    test_metrics: dict = field(default_factory=dict)
     val_metrics: dict = field(default_factory=dict)
     cv_f1_mean: float = 0.0
     cv_f1_std: float = 0.0
@@ -264,18 +275,18 @@ def train(
 
     test_prob = calibrated.predict_proba(X_test)[:, 1]
     test_pred = (test_prob >= 0.5).astype(int)
-    train_metrics = _compute_metrics(y_test, test_pred, test_prob)
+    test_metrics = _compute_metrics(y_test, test_pred, test_prob)
 
     if verbose:
         print(f"\nVal  — F1: {val_metrics['f1']:.4f} | AUC: {val_metrics['roc_auc']:.4f} | Brier: {val_metrics['brier_score']:.4f}")
-        print(f"Test — F1: {train_metrics['f1']:.4f} | AUC: {train_metrics['roc_auc']:.4f} | Brier: {train_metrics['brier_score']:.4f}")
+        print(f"Test — F1: {test_metrics['f1']:.4f} | AUC: {test_metrics['roc_auc']:.4f} | Brier: {test_metrics['brier_score']:.4f}")
 
     return ModelBundle(
         model_name=model_name,
         calibrated_pipeline=calibrated,
         raw_pipeline=pipeline,
         feature_names=list(feature_cols),
-        train_metrics=train_metrics,
+        test_metrics=test_metrics,
         val_metrics=val_metrics,
         cv_f1_mean=cv_f1_mean,
         cv_f1_std=cv_f1_std,
@@ -322,12 +333,11 @@ def predict_score(
     - top_features (top-3 SHAP contributors with direction)
     - display_text (counselor-facing summary, no clinical labels)
     """
+    feature_names = bundle.feature_names
     if isinstance(X, pd.DataFrame):
-        X_arr = X[bundle.feature_names].values
-        feature_names = bundle.feature_names
+        X_arr = X[feature_names].values
     else:
         X_arr = X
-        feature_names = bundle.feature_names
 
     probs = bundle.calibrated_pipeline.predict_proba(X_arr)[:, 1]
     scores = (probs * 100).clip(0, 100)

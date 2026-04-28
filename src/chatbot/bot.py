@@ -21,8 +21,11 @@ from pathlib import Path
 from typing import Optional
 
 from src.chatbot.knowledge_base import KnowledgeBase
+from groq import Groq
+
 from src.chatbot.safety import (
     CRISIS_RESOURCE_TEXT,
+    CRISIS_RESOURCE_TEXT_SHORT,
     FilterResult,
     contains_crisis_output,
     filter_output,
@@ -82,7 +85,6 @@ class CrisisAwareChatbot:
             raise ValueError(
                 "GROQ_API_KEY not set. Add to .env or pass groq_api_key= directly."
             )
-        from groq import Groq
         self._groq = Groq(api_key=api_key)
 
     # ------------------------------------------------------------------
@@ -260,4 +262,3 @@ class CrisisAwareChatbot:
         return messages
 
 
-CRISIS_RESOURCE_TEXT_SHORT = "988 (call/text) | Crisis Text Line: HOME to 741741"

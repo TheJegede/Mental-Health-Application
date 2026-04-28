@@ -92,7 +92,10 @@ def load_chatbot():
         st.warning(f"NLP layer unavailable (crisis lexicon still active): {e}")
         nlp = None
 
-    api_key = os.environ.get("GROQ_API_KEY") or st.secrets.get("GROQ_API_KEY", "")
+    try:
+        api_key = os.environ.get("GROQ_API_KEY") or st.secrets.get("GROQ_API_KEY", "")
+    except Exception:
+        api_key = os.environ.get("GROQ_API_KEY", "")
     if not api_key:
         st.error("GROQ_API_KEY not set. Add to .env or Streamlit secrets.")
         return None

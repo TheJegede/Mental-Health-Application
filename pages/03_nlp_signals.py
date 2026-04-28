@@ -9,9 +9,13 @@ from pathlib import Path
 import streamlit as st
 from dotenv import load_dotenv
 
+
+
 repo_root = Path(__file__).parent.parent
 sys.path.insert(0, str(repo_root))
 load_dotenv(repo_root / ".env")
+
+from src.chatbot.safety import CRISIS_FOOTER_MD
 
 st.set_page_config(
     page_title="NLP Distress Signals — Campus Wellness Navigator",
@@ -260,7 +264,7 @@ for sub in submissions:
 
         # LIME analysis
         lime_key = f"lime_{sub['id']}"
-        if st.button(f"Analyze with LIME", key=lime_key):
+        if st.button("Analyze with LIME", key=lime_key):
             if nlp_available:
                 with st.spinner("Running LIME analysis (~10s)..."):
                     try:
@@ -347,7 +351,4 @@ if analyze_btn and user_text.strip():
             st.error(f"Crisis check failed: {e}")
 
 st.divider()
-st.caption(
-    "**Crisis resources:** Call or text **988** · Text HOME to **741741** · "
-    "UCLA CAPS: **(310) 825-0768** · Emergency: **911**"
-)
+st.caption(CRISIS_FOOTER_MD)

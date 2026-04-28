@@ -31,6 +31,13 @@ CRISIS_RESOURCE_TEXT_PLAIN = (
     "If in immediate danger: call 911."
 )
 
+CRISIS_RESOURCE_TEXT_SHORT = "988 (call/text) | Crisis Text Line: HOME to 741741"
+
+CRISIS_FOOTER_MD = (
+    "**Crisis resources:** Call or text **988** · Text HOME to **741741** · "
+    "UCLA CAPS: **(310) 825-0768** · Emergency: **911**"
+)
+
 
 # ---------------------------------------------------------------------------
 # Output filter patterns

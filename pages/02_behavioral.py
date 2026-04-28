@@ -15,6 +15,10 @@ repo_root = Path(__file__).parent.parent
 sys.path.insert(0, str(repo_root))
 load_dotenv(repo_root / ".env")
 
+from src.risk_classifier import FEATURE_COLS, FEATURE_RISK_DIRECTION
+from src.synthetic_data import demo_score_from_df
+from src.chatbot.safety import CRISIS_FOOTER_MD
+
 st.set_page_config(
     page_title="Behavioral Risk — Campus Wellness Navigator",
     page_icon="🎯",
@@ -28,17 +32,6 @@ st.warning(
 
 _SYNTH_CSV = repo_root / "data" / "synthetic" / "student_wellbeing.csv"
 _MODEL_PATH = repo_root / "models" / "risk_classifier.pkl"
-
-FEATURE_COLS = [
-    "engagement_variance",
-    "sleep_schedule_drift",
-    "social_activity_decline",
-    "academic_trend",
-    "missed_class_streak",
-    "financial_stress_flag",
-    "help_seeking_flag",
-    "self_report_score",
-]
 
 FEATURE_LABELS = {
     "engagement_variance": "LMS Engagement Variance",
@@ -101,20 +94,7 @@ def compute_scores(df: pd.DataFrame, use_model: bool) -> pd.Series:
                 return pd.Series([r.score for r in results], index=df.index)
             except Exception:
                 pass
-    # Demo scoring: reproduce latent formula from synthetic_data.py
-    sr_norm = (100.0 - df["self_report_score"]) / 100.0
-    latent = (
-        0.20 * df["engagement_variance"]
-        + 0.20 * df["sleep_schedule_drift"]
-        + (-0.18) * df["social_activity_decline"]
-        + (-0.22) * df["academic_trend"]
-        + 0.18 * (df["missed_class_streak"] / 14.0)
-        + 0.12 * df["financial_stress_flag"]
-        + (-0.08) * df["help_seeking_flag"]
-        + (-0.25) * sr_norm
-    )
-    lo, hi = latent.min(), latent.max()
-    return ((latent - lo) / (hi - lo) * 100).clip(0, 100).round(1)
+    return demo_score_from_df(df).round(1)
 
 
 # ---------------------------------------------------------------------------
@@ -226,11 +206,7 @@ else:
         {
             "Feature": [FEATURE_LABELS[f] for f in FEATURE_COLS],
             "Value": [student_row[f] for f in FEATURE_COLS],
-            "Direction": [
-                "(+) risk" if f not in ("self_report_score", "help_seeking_flag", "academic_trend")
-                else "(-) risk"
-                for f in FEATURE_COLS
-            ],
+            "Direction": [FEATURE_RISK_DIRECTION.get(f, "(+) risk") for f in FEATURE_COLS],
         }
     )
     st.dataframe(feat_df, use_container_width=True, hide_index=True)
@@ -241,7 +217,6 @@ else:
             with st.spinner("Computing SHAP..."):
                 try:
                     from src.risk_classifier import predict_score
-                    import matplotlib.pyplot as plt
                     results = predict_score(bundle, df_scored[df_scored["student_id"] == selected_id][FEATURE_COLS], compute_shap=True)
                     r = results[0]
                     if r.top_features:
@@ -282,7 +257,4 @@ else:
             st.write(sorted(st.session_state.reviewed))
 
 st.divider()
-st.caption(
-    "**Crisis resources:** Call or text **988** · Text HOME to **741741** · "
-    "UCLA CAPS: **(310) 825-0768** · Emergency: **911**"
-)
+st.caption(CRISIS_FOOTER_MD)
