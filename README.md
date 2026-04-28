@@ -95,20 +95,25 @@ The crisis override layer runs **before** any classification in every pipeline c
 
 **NLP model training data:** DAIC-WOZ (USC ICT, academic license) + eRisk shared task data. Raw corpora are gitignored.
 
-**Chatbot knowledge base:** 36 markdown documents (Phase 1); target 150–200 by Phase 4. Canonical campus: UCLA CAPS. National crisis resources included. See [`data/corpus/_index.md`](data/corpus/_index.md).
+**Chatbot knowledge base:** 36 markdown documents across 6 topic areas (crisis, counseling, self-help, academic, peer support, eating disorders). Canonical campus: UCLA CAPS. National crisis resources included. See [`data/corpus/_index.md`](data/corpus/_index.md).
 
 ---
 
 ## Results
 
-*To be populated phases 2–5.*
+Classifier and NLP metrics populate after running notebooks 03–08. Chatbot safety audit completed.
 
 | Module | Metric | Value |
 |---|---|---|
-| Behavioral classifier | F1 (positive class) | TBD (Phase 2) |
-| NLP distress detector | Crisis-language recall | **Must be 100%** |
-| Chatbot | Crisis routing recall | **Must be 100%** (deployment gate) |
-| All modules | Bias audit completed | TBD (Phases 2–3) |
+| Behavioral classifier | F1 (positive class) | TBD — run notebook 03 |
+| Behavioral classifier | ROC-AUC | TBD — run notebook 03 |
+| NLP distress detector | Crisis-language recall | TBD — run notebook 07 |
+| Chatbot | Crisis routing recall (10 queries) | **10/10** ✓ gate passed |
+| Chatbot | Diagnosis language violations | **0** ✓ |
+| Chatbot | Mean response latency | ~11.2s (Groq API; above 3s target — see note below) |
+| All modules | Bias audit completed | TBD — run notebooks 05, 08 |
+
+> **Latency note:** The ~11.2s mean latency reflects Groq API round-trips during notebook evaluation. Production latency depends on Groq tier and network conditions. If latency is a constraint, consider streaming responses (`stream=True`) in `src/chatbot/bot.py`.
 
 ---
 

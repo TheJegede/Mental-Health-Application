@@ -11,3 +11,4 @@ models/distress_classifier/
 *.egg-info/
 dist/
 build/
+CLAUDE.md
