@@ -79,7 +79,7 @@ with tab_clf:
         try:
             from src.risk_classifier import load_model
             bundle = load_model(_MODEL_PATH)
-            if bundle.test_metrics:
+            if getattr(bundle, "test_metrics", {}):
                 st.success("Trained model found. Test metrics loaded from model bundle.")
             else:
                 st.success("Trained model found. Re-run `notebooks/03_classifier_training.ipynb` to populate metrics.")
@@ -92,7 +92,7 @@ with tab_clf:
             "to train and save the model. Metrics will populate here automatically."
         )
 
-    tm = bundle.test_metrics if (bundle and bundle.test_metrics) else {}
+    tm = getattr(bundle, "test_metrics", {}) if bundle else {}
 
     def _fmt(v: float) -> str:
         return f"{v:.4f}"
