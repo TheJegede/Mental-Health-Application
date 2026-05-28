@@ -1327,7 +1327,7 @@ wheels = [
 [[package]]
 name = "mental-health-application"
 version = "0.1.0"
-source = { editable = "." }
+source = { virtual = "." }
 dependencies = [
     { name = "aif360" },
     { name = "chromadb" },
